@@ -1,6 +1,6 @@
 # searchRedis
 
----
+### Usage
 
 The commmand line prompt is as follows:
 
