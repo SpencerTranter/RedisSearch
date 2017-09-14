@@ -9,9 +9,9 @@ npm run start --database='trap_photos_by_mac' --key='001C2C1B26097F0B' --redisba
 
 database: Which redis collection you are looking to search through.
 
-key: What the collection is keyed on. Usually a mac address.
+key: What the collection is keyed on. Usually a mac address or `all`.
 
-redisbase: Either 'latest' or 'general'.
+redisbase: Either 'latest', 'general' or 'nodesByGateway'.
 
 ---
 

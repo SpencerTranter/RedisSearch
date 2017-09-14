@@ -50,19 +50,40 @@ waterfall([
     console.log(`searching for ${key}`);
     // gather all records
 
-    redis.hmget(db, key,  (error, reply) => {
+    if (key === 'all') {
 
-      if (error) next(error);
-      else if (reply[0] === null) next('NO DATA');
-      else {
+      redis.hgetall(db, (error, reply) => {
 
-        console.log(reply);
+        if (error) next(error);
+        else if (reply[0] === null) next('NO DATA');
+        else {
 
-        next(null);
+          console.log(reply);
 
-      }
+          next(null);
 
-    });
+        }
+
+      });
+
+    }
+    else {
+
+      redis.hmget(db, key,  (error, reply) => {
+
+        if (error) next(error);
+        else if (reply[0] === null) next('NO DATA');
+        else {
+
+          console.log(reply);
+
+          next(null);
+
+        }
+
+      });
+
+    }
 
   }
 ], (err) => {
