@@ -10,89 +10,93 @@ var redisBase   = process.env.npm_config_redisbase;
 
 var redis;
 
-waterfall([
+new Promise((resolve) => {
 
-  function (next) {
+  redis = Redis.createClient(config[env].redis[redisBase]);
 
-    redis = Redis.createClient(config[env].redis[redisBase]);
+  redis.on('error', (err) => {
 
-    redis.on('error', (err) => {
+    console.log('Unable to connect to Redis.', err);
 
-      console.log('Unable to connect to Redis.', err);
+    throw new Error(err);
 
-      next(err);
+  });
+
+  redis.on('connect', () => {
+
+    console.log('Connected to Redis.');
+
+    resolve();
+
+  });
+
+})
+.then(() => new Promise((resolve) => {
+
+  console.log('Setting Redis Client Name (searchRedis).');
+  // easy to debug identity when executing CLIENT LIST.
+  redis.send_command('CLIENT', ['SETNAME', 'searchRedis'], (err) => {
+
+    if (err) throw new Error(err);
+    else resolve();
+
+  });
+
+}))
+.then(() => new Promise((resolve) => {
+
+  console.log(`searching for ${key}`);
+  // gather all records
+
+  if (key === 'all') {
+
+    redis.hgetall(db, (error, reply) => {
+
+      if (error) throw new Error(error);
+      else if (reply[0] === null) throw new Error('NO DATA');
+      else {
+
+        console.log(reply);
+
+        resolve();
+
+      }
 
     });
-
-    redis.on('connect', () => {
-
-      console.log('Connected to Redis.');
-
-      next(null);
-
-    });
-
-  },
-  function (next) {
-
-    console.log('Setting Redis Client Name (searchRedis).');
-    // easy to debug identity when executing CLIENT LIST.
-    redis.send_command('CLIENT', ['SETNAME', 'searchRedis'], (err) => {
-
-      if (err) next(err);
-      else     next(null);
-
-    });
-
-  },
-  function (next) {
-
-    console.log(`searching for ${key}`);
-    // gather all records
-
-    if (key === 'all') {
-
-      redis.hgetall(db, (error, reply) => {
-
-        if (error) next(error);
-        else if (reply[0] === null) next('NO DATA');
-        else {
-
-          console.log(reply);
-
-          next(null);
-
-        }
-
-      });
-
-    }
-    else {
-
-      redis.hmget(db, key,  (error, reply) => {
-
-        if (error) next(error);
-        else if (reply[0] === null) next('NO DATA');
-        else {
-
-          console.log(reply);
-
-          next(null);
-
-        }
-
-      });
-
-    }
 
   }
-], (err) => {
+  else {
 
+    redis.hmget(db, key,  (error, reply) => {
+
+      if (error) throw new Error(error);
+      else if (reply[0] === null) throw new Error('NO DATA');
+      else {
+
+        console.log(reply);
+
+        resolve();
+
+      }
+
+    });
+
+  }
+
+}))
+.then(() => {
 
   console.log('Disconnecting from Redis..');
   redis.end(true);
 
-  if (err) console.log(err);
-  else console.log('done');
+  console.log('done');
+
+})
+.catch((err) => {
+
+  console.log('Disconnecting from Redis..');
+  redis.end(true);
+
+  console.log('ERROR', err);
 
 });
