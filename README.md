@@ -4,8 +4,9 @@
 
 The commmand line prompt is as follows:
 
-npm run start --database='trap_photos_by_mac' --key='001C2C1B26097F0B' --redisbase='latest'
+npm run start --env='prod' --database='trap_photos_by_mac' --key='001C2C1B26097F0B' --redisbase='latest'
 
+env: Either `stage` or `prod`.
 
 database: Which redis collection you are looking to search through.
 

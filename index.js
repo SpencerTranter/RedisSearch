@@ -2,7 +2,7 @@ const waterfall = require('async.waterfall');
 const Redis     = require('redis');
 const config    = require('./config.json');
 
-var env         = 'prod';
+var env         = process.env.npm_config_env;
 var db          = process.env.npm_config_database;
 var key         = process.env.npm_config_key
 var redisBase   = process.env.npm_config_redisbase;
