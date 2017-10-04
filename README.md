@@ -4,7 +4,7 @@
 
 The commmand line prompt is as follows:
 
-npm run start --database='redis-latest-prod' --key='trap-photos-by-mac' --field='001C2C1B26097F0B'
+npm run start --database='redis-latest-prod' --key='nodes-by-mac' --field='001C2C1B26097F0B'
 
 database: Which Redis deployment you are looking to search through.
 
