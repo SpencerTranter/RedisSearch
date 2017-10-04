@@ -2,17 +2,16 @@ const waterfall = require('async.waterfall');
 const Redis     = require('redis');
 const config    = require('./config.json');
 
-var env         = process.env.npm_config_env;
 var db          = process.env.npm_config_database;
 var key         = process.env.npm_config_key
-var redisBase   = process.env.npm_config_redisbase;
+var field       = process.env.npm_config_field;
 
 
 var redis;
 
 new Promise((resolve) => {
 
-  redis = Redis.createClient(config[env].redis[redisBase]);
+  redis = Redis.createClient(config[db]);
 
   redis.on('error', (err) => {
 
@@ -45,12 +44,12 @@ new Promise((resolve) => {
 }))
 .then(() => new Promise((resolve) => {
 
-  console.log(`searching for ${key}`);
+  console.log(`searching for ${field} in ${key}`);
   // gather all records
 
-  if (key === 'all') {
+  if (field === 'all') {
 
-    redis.hgetall(db, (error, reply) => {
+    redis.hgetall(key, (error, reply) => {
 
       if (error) throw new Error(error);
       else if (reply[0] === null) throw new Error('NO DATA');
@@ -67,7 +66,7 @@ new Promise((resolve) => {
   }
   else {
 
-    redis.hmget(db, key,  (error, reply) => {
+    redis.hmget(key, field,  (error, reply) => {
 
       if (error) throw new Error(error);
       else if (reply[0] === null) throw new Error('NO DATA');
@@ -89,7 +88,7 @@ new Promise((resolve) => {
   console.log('Disconnecting from Redis..');
   redis.end(true);
 
-  console.log('done');
+  console.log('Success!');
 
 })
 .catch((err) => {

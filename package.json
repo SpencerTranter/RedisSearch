@@ -1,24 +1,23 @@
 {
-  "name": "searchredis",
+  "name": "redis-search",
   "version": "1.0.0",
-  "description": "",
+  "description": "## Usage",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semiosBIO/searchRedis.git"
+    "url": "git+https://github.com/SpencerTranter/redis-search.git"
   },
   "author": "Spencer Tranter",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/semiosBIO/searchRedis/issues"
+    "url": "https://github.com/SpencerTranter/redis-search/issues"
   },
-  "homepage": "https://github.com/semiosBIO/searchRedis#readme",
+  "homepage": "https://github.com/SpencerTranter/redis-search#readme",
   "dependencies": {
     "async.waterfall": "^0.5.2",
-    "redis": "^2.7.1"
+    "redis": "^2.8.0"
   }
 }
