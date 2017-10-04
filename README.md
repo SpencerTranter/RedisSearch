@@ -4,13 +4,13 @@
 
 The commmand line prompt is as follows:
 
-npm run start --database='redis-latest-prod' --key='nodes-by-mac' --field='001C2C1B26097F0B'
+npm run start --database='redis-latest-prod' --key='nodes_by_mac' --field='001C2C1B26097F0B'
 
 database: Which Redis deployment you are looking to search through.
 
 key: What key of that deployment are you searching through.
 
-field: Which value to grab data back from. Can be set too `all`.
+field: Which value to grab data back from. Can be set to `all`.
 
 ---
 
