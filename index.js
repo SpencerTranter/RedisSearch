@@ -5,11 +5,11 @@ const config    = require('./config.json');
 var db          = process.env.npm_config_database;
 var key         = process.env.npm_config_key
 var field       = process.env.npm_config_field;
-
+console.log(db);
 
 var redis;
 
-new Promise((resolve) => {
+const createRedis = () => new Promise((resolve, resolve) => {
 
   redis = Redis.createClient(config[db]);
 
@@ -17,7 +17,7 @@ new Promise((resolve) => {
 
     console.log('Unable to connect to Redis.', err);
 
-    throw new Error(err);
+    reject(err);
 
   });
 
@@ -25,24 +25,26 @@ new Promise((resolve) => {
 
     console.log('Connected to Redis.');
 
-    resolve();
+    resolve(redis);
 
   });
 
-})
-.then(() => new Promise((resolve) => {
+});
+
+const setRedis = () => new Promise((resolve, reject) => {
 
   console.log('Setting Redis Client Name (searchRedis).');
   // easy to debug identity when executing CLIENT LIST.
   redis.send_command('CLIENT', ['SETNAME', 'searchRedis'], (err) => {
 
-    if (err) throw new Error(err);
+    if (err) reject(err);
     else resolve();
 
   });
 
-}))
-.then(() => new Promise((resolve) => {
+});
+
+const getRedis = () => new Promise((resolve, reject) => {
 
   console.log(`searching for ${field} in ${key}`);
   // gather all records
@@ -51,12 +53,11 @@ new Promise((resolve) => {
 
     redis.hgetall(key, (error, reply) => {
 
-      if (error) throw new Error(error);
-      else if (reply[0] === null) throw new Error('NO DATA');
+      if      (error) reject(error);
+      else if (reply[0] === null) reject('NO DATA');
       else {
 
         console.log(reply);
-
         resolve();
 
       }
@@ -68,12 +69,11 @@ new Promise((resolve) => {
 
     redis.hmget(key, field,  (error, reply) => {
 
-      if (error) throw new Error(error);
-      else if (reply[0] === null) throw new Error('NO DATA');
+      if      (error) reject(error);
+      else if (reply[0] === null) reject('NO DATA');
       else {
 
         console.log(reply);
-
         resolve();
 
       }
@@ -82,7 +82,11 @@ new Promise((resolve) => {
 
   }
 
-}))
+});
+
+createRedis()
+.then(() => setRedis())
+.then(() => getRedis())
 .then(() => {
 
   console.log('Disconnecting from Redis..');
